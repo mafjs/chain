@@ -2,6 +2,8 @@
 
 data chain object for node.js and browser
 
+![stability-unstable](https://img.shields.io/badge/stability-unstable-yellow.svg)
+
 [![bitHound Overall Score](https://www.bithound.io/github/mafjs/chain/badges/score.svg)](https://www.bithound.io/github/mafjs/chain)
 [![bitHound Dependencies](https://www.bithound.io/github/mafjs/chain/badges/dependencies.svg)](https://www.bithound.io/github/mafjs/chain/master/dependencies/npm)
 [![Build Status](https://travis-ci.org/mafjs/chain.svg?branch=master)](https://travis-ci.org/mafjs/chain)
