@@ -10,7 +10,14 @@ var steps = {
         return value;
 
     },
-    skip: null
+    skip: null,
+    sort: function (data, field, direction) {
+        if (!data.sort) {
+            data.sort = {};
+        }
+
+        data.sort[field] = direction;
+    }
 };
 
 var defaults = {
@@ -31,7 +38,8 @@ chain.onExec(function (data) {
 chain
     .limit(-20)
     .skip(1)
+    .sort('name', 'asc')
     .exec()
-    .then((data) => {
-        console.log(data);
+    .then(() => {
+        console.log(chain.getData());
     });

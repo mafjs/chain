@@ -1,21 +1,13 @@
 var ChainError = require('./Error');
+
 /**
  * Data chain object
- *
- * @example
- * var Chain = require('maf/Chain');
- * var chain = new Chain({limit: {defaults: 5}, skip: null});
- * chain.onExec((data) => {console.log(data);});
- *
- * chain.skip(5).limit(10).exec(); // get data in onExec callback
- * // OR
- * var data = chain.skip(5).limit(10).data();
  */
 class Chain {
 
     /**
      * @param {Object|Array} steps
-     * @param {Object} defaults
+     * @param {?Object} defaults
      */
     constructor (steps, defaults) {
 
@@ -34,12 +26,66 @@ class Chain {
     }
 
     /**
-     * return collected data
+     * return collected data, cloned value
      *
      * @return {Object}
      */
-    get data () {
-        return this._data;
+    getData () {
+        return this._clone(this._data);
+    }
+
+    /**
+     * map data to chain
+     *
+     * @param {Object} data
+     * @return {this}
+     */
+    mapToChain (data) {
+
+        for (var name in data) {
+            if (!this[name]) {
+                throw ChainError
+                        .createError(ChainError.CODES.NO_METHOD)
+                        .bind({method: name});
+            }
+
+            this[name](data[name]);
+        }
+
+        return this;
+    }
+
+    /**
+     * set exec callback
+     *
+     * @param {Function} callback
+     * @return {this}
+     */
+    onExec (callback) {
+        this._execCallback = callback;
+        return this;
+    }
+
+    /**
+     * exec onExec callback
+     *
+     * @return {*}
+     */
+    exec () {
+        if (!this._execCallback) {
+            return this.getData();
+        }
+
+        return this._execCallback(this._data);
+    }
+
+    /**
+     * alias for exec
+     *
+     * @return {*}
+     */
+    done () {
+        return this.exec();
     }
 
     /**
@@ -108,56 +154,16 @@ class Chain {
 
     }
 
-    /**
-     * map data to chain
-     *
-     * @param {Object} data
-     * @return {this}
-     */
-    mapToChain (data) {
-
-        for (var name in data) {
-            if (!this[name]) {
-                throw ChainError
-                        .createError(ChainError.CODES.NO_METHOD)
-                        .bind({method: name});
-            }
-
-            this[name](data[name]);
-        }
-
-        return this;
-    }
 
     /**
-     * set exec callback
+     * simple object clone
      *
-     * @param {Function} callback
+     * @private
+     * @param {Object} value
+     * @return {Object}
      */
-    onExec (callback) {
-        this._execCallback = callback;
-    }
-
-    /**
-     * exec onExec callback
-     *
-     * @return {*}
-     */
-    exec () {
-        if (!this._execCallback) {
-            return this._data;
-        }
-
-        return this._execCallback(this._data);
-    }
-
-    /**
-     * alias for exec
-     *
-     * @return {*}
-     */
-    done () {
-        return this.exec();
+    _clone (value) {
+        return JSON.parse(JSON.stringify(value));
     }
 
 }
