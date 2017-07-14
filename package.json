@@ -44,7 +44,7 @@
     "tap": "10.x"
   },
   "dependencies": {
-    "maf-error": "0.9.x"
+    "maf-error": "1.0.x"
   },
   "nyc": {
     "all": true,
