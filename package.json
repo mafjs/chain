@@ -9,7 +9,7 @@
     "build:for-test": "npm run build -- --plugins istanbul",
     "build:package-json": "node ./scripts/copyPackageJson",
     "dev": "npm run build -- --watch --plugins istanbul",
-    "_test": "npm run build:for-test && ./node_modules/.bin/tap test/unit -J --coverage",
+    "test": "mocha",
     "test:fast": "./node_modules/.bin/tap test/unit -J",
     "test:cov": "npm test -- --coverage-report=html",
     "postversion": "git push origin && git push --tags",
@@ -34,14 +34,15 @@
   },
   "homepage": "https://github.com/mafjs/chain#readme",
   "devDependencies": {
+    "@maf/eslint-config": "^0.2.0",
     "babel-cli": "^6.26.0",
-    "babel-plugin-istanbul": "^4.1.4",
     "babel-preset-es2015": "^6.24.1",
+    "chai": "^4.1.2",
     "coveralls": "^2.13.1",
-    "eslint": "^4.6.1",
     "in-publish": "^2.0.0",
-    "proxyquire": "^1.8.0",
-    "tap": "^10.7.2"
+    "mocha": "^3.5.0",
+    "nyc": "^11.1.0",
+    "proxyquire": "^1.8.0"
   },
   "dependencies": {
     "maf-error": "^1.2.0"
@@ -49,11 +50,7 @@
   "nyc": {
     "all": true,
     "include": [
-      "src/*.js",
-      "src/methods/**/*.js"
-    ],
-    "exclude": [
-      "src/modules/kind-of.js"
+      "src/**/*.js"
     ]
   }
 }
