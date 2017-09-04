@@ -9,7 +9,7 @@
     "build:for-test": "npm run build -- --plugins istanbul",
     "build:package-json": "node ./scripts/copyPackageJson",
     "dev": "npm run build -- --watch --plugins istanbul",
-    "test": "npm run build:for-test && ./node_modules/.bin/tap test/unit -J --coverage",
+    "_test": "npm run build:for-test && ./node_modules/.bin/tap test/unit -J --coverage",
     "test:fast": "./node_modules/.bin/tap test/unit -J",
     "test:cov": "npm test -- --coverage-report=html",
     "postversion": "git push origin && git push --tags",
