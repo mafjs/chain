@@ -1,3 +1,3 @@
-var Chain = require('./Chain');
+import Chain from './Chain';
 
-module.exports = Chain;
+export default Chain;

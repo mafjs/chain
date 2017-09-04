@@ -1,0 +1,6 @@
+--recursive
+--require test/init.js
+--sort
+--use_strict
+--check-leaks
+--compilers babel-core/register

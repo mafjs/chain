@@ -1,9 +1,9 @@
-var ChainError = require('./Error');
+import ChainError from './Error';
 
 /**
  * Data chain object
  */
-class Chain {
+export default class Chain {
 
     /**
      * @param {Object|Array} steps
@@ -44,9 +44,8 @@ class Chain {
 
         for (var name in data) {
             if (!this[name]) {
-                throw ChainError
-                        .createError(ChainError.CODES.NO_METHOD)
-                        .bind({method: name});
+                throw ChainError.createError(ChainError.CODES.NO_METHOD)
+                    .bind({method: name});
             }
 
             this[name](data[name]);
@@ -88,64 +87,69 @@ class Chain {
         return this.exec();
     }
 
+    _createSimpleStep (stepName) {
+        return (value) => {
+
+            if (typeof value === 'undefined') {
+                return this;
+            }
+
+            this._data[stepName] = value;
+
+            return this;
+        };
+    }
+
+    _createFunctionStep (stepName, step) {
+        var that = this;
+
+        return function () {
+
+            // TODO simpler
+            let args = [that._data];
+
+            for (var i in arguments) {
+                args.push(arguments[i]);
+            }
+
+            let value = step.apply(this, args);
+
+            if (typeof value !== 'undefined') {
+                this._data[stepName] = value;
+            }
+
+            return this;
+        };
+    }
+
     /**
      * init chain by config
      *
      * @private
      */
     _init () {
-        var that = this;
-
-        var makeSimpleStep = function (stepName) {
-            return function (value) {
-                if (value) {
-                    this._data[stepName] = value;
-                }
-
-                return this;
-            };
-        };
-
-        var makeFunctionStep = function (stepName, step) {
-
-            return function () {
-                var args = [this._data];
-
-                for (var i in arguments) {
-                    args.push(arguments[i]);
-                }
-
-                var value = step.apply(this, args);
-
-                if (typeof value !== 'undefined') {
-                    this._data[stepName] = value;
-                }
-
-                return this;
-            };
-
-        };
-
         if (typeof this._defaults === 'object') {
             this._data = JSON.parse(JSON.stringify(this._defaults));
         }
 
-        var name;
+        let name;
 
         if (Array.isArray(this._steps)) {
+
             for (var i in this._steps) {
                 name = this._steps[i];
-                that[name] = makeSimpleStep(name);
+                this[name] = this._createSimpleStep(name);
             }
+
         } else {
             for (name in this._steps) {
 
                 var step = this._steps[name];
 
                 if (typeof step === 'function') {
-                    that[name] = makeFunctionStep(name, step);
+                    this[name] = this._createFunctionStep(name, step);
                 } else {
-                    that[name] = makeSimpleStep(name);
+                    this[name] = this._createSimpleStep(name);
                 }
 
             }
@@ -167,5 +171,3 @@ class Chain {
     }
 
 }
-
-module.exports = Chain;
