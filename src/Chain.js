@@ -13,16 +13,27 @@ export default class Chain {
 
         this.Error = ChainError;
 
-        this._steps = steps;
+        this._steps = {};
 
-        this._defaults = defaults;
+        this._defaults = {};
 
         this._execCallback = null;
 
         this._data = {};
 
-        this._init();
+        this.add(steps, defaults);
 
+    }
+
+    /**
+     * @param {Object|Array} steps
+     * @param {?Object} defaults
+     * @return {this}
+     */
+    add (steps, defaults) {
+        this._mergeDefaults(defaults);
+        this._addSteps(steps);
+        return this;
     }
 
     /**
@@ -122,29 +133,30 @@ export default class Chain {
         };
     }
 
-    /**
-     * init chain by config
-     *
-     * @private
-     */
-    _init () {
-        if (typeof this._defaults === 'object') {
-            this._data = JSON.parse(JSON.stringify(this._defaults));
+    _mergeDefaults (defaults) {
+        if (typeof defaults === 'object') {
+            this._data = Object.assign(this._data, defaults);
         }
+    }
 
+    /**
+     * @private
+     * @param {Array} steps
+     */
+    _addSteps (steps) {
         let name;
 
-        if (Array.isArray(this._steps)) {
+        if (Array.isArray(steps)) {
 
-            for (var i in this._steps) {
-                name = this._steps[i];
+            for (var i in steps) {
+                name = steps[i];
                 this[name] = this._createSimpleStep(name);
             }
 
         } else {
-            for (name in this._steps) {
+            for (name in steps) {
 
-                var step = this._steps[name];
+                var step = steps[name];
 
                 if (typeof step === 'function') {
                     this[name] = this._createFunctionStep(name, step);
